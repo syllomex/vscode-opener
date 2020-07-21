@@ -1,0 +1,19 @@
+{
+  "name": "VSProjects",
+  "version": "1.3.0",
+  "description": "Open VSCode projects from system tray.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "Leonardo Santos <leonardojdossantos@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "electron-store": "^5.2.0"
+  },
+  "devDependencies": {
+    "electron": "^9.0.5",
+    "electron-builder": "^22.7.0"
+  }
+}
