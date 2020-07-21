@@ -10,7 +10,8 @@
   "author": "Leonardo Santos <leonardojdossantos@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "electron-store": "^5.2.0"
+    "electron-store": "^5.2.0",
+    "lodash": "^4.17.19"
   },
   "devDependencies": {
     "electron": "^9.0.5",
