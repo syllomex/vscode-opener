@@ -1,20 +1,27 @@
 {
-  "name": "VSProjects",
+  "name": "vs-projects",
   "version": "1.3.0",
   "description": "Open VSCode projects from system tray.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --linux deb --dir",
+    "build:windows": "electron-builder --win"
   },
   "author": "Leonardo Santos <leonardojdossantos@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "electron-store": "^5.2.0",
-    "lodash": "^4.17.19"
+    "electron-store": "^6.0.1",
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
-    "electron": "^9.0.5",
-    "electron-builder": "^22.7.0"
+    "electron": "^10.1.5",
+    "electron-builder": "^22.9.1"
+  },
+  "build": {
+    "linux": {
+      "icon": "./assets/icon.png",
+      "category": "Utility"
+    }
   }
 }

@@ -6,18 +6,21 @@ const { spawnSync, exec } = require("child_process");
 const store = new Store();
 
 function AddProject() {
-  dialog.showOpenDialog({ properties: ["openDirectory"] }).then((path) => {
-    if (path.canceled) return;
+  const path = dialog.showOpenDialogSync({ properties: ["openDirectory"] });
+  if (!path) return;
 
-    let directory = path.filePaths[0];
-    let dirNameArray = directory.split("\\");
-    let pos = dirNameArray.length - 1;
-    let dirName = dirNameArray[pos];
+  let directory = path[0];
+  let dirNameArray = directory.split("\\");
+  let pos = dirNameArray.length - 1;
+  let dirName = dirNameArray[pos];
 
-    store.set(dirName, directory);
+  if (process.platform === "linux") {
+    let splitted = dirName.split("/");
+    dirName = splitted[splitted.length - 1];
+  }
 
-    app.emit("refresh");
-  });
+  store.set(dirName, directory);
+  app.emit("refresh");
 }
 
 function RemoveProject({ key }) {
@@ -27,7 +30,11 @@ function RemoveProject({ key }) {
 
 function OpenProject({ key }) {
   let projectPath = store.get(key);
-  spawnSync("code.cmd", [projectPath]);
+  if (process.platform === "win32") {
+    spawnSync("code.cmd", [projectPath]);
+  } else {
+    spawnSync("code", [projectPath]);
+  }
 }
 
 function OpenFolder({ key }) {
@@ -38,6 +45,7 @@ function OpenFolder({ key }) {
 function OpenInTerminal({ key }) {
   let projectPath = store.get(key);
   let disk = projectPath.slice(0, 1);
+
   exec(`start cmd.exe /K cd /${disk} ${projectPath}`);
 }
 
@@ -71,8 +79,7 @@ app.on("ready", () => {
         click: () => OpenInTerminal({ key }),
       });
     });
-
-    const contextMenu = Menu.buildFromTemplate([
+    const menu = [
       ...projects,
       { type: "separator" },
       {
@@ -82,25 +89,39 @@ app.on("ready", () => {
           AddProject();
         },
       },
-      {
-        label: "Abrir no Explorer",
+    ];
+
+    if (keys.length > 0) {
+      menu.push({
+        label:
+          process.platform === "win32"
+            ? "Abrir no Explorer"
+            : "Abrir Diretório",
         submenu: [...folderProjects],
-      },
-      {
-        label: "Abrir no Terminal",
-        submenu: [...terminalProjects],
-      },
-      {
+      });
+      if (process.platform === "win32") {
+        menu.push({
+          label: "Abrir no Terminal",
+          submenu: [...terminalProjects],
+        });
+      }
+      menu.push({
         label: "Remover Projeto",
         submenu: [...removeProjects],
-      },
+      });
+    }
+
+    menu.push(
       { type: "separator" },
-      { label: "Sair", click: () => app.quit() },
-    ]);
+      { label: "Sair", click: () => app.quit() }
+    );
+
+    const contextMenu = Menu.buildFromTemplate(menu);
 
     tray.setContextMenu(contextMenu);
   });
 
   app.emit("refresh");
-  tray.setToolTip("VSCode Projects");
+  tray.setToolTip("VSProjects");
+  tray.setTitle("VSProjects");
 });
