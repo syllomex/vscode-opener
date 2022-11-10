@@ -15,7 +15,7 @@
     "lodash": "^4.17.20"
   },
   "devDependencies": {
-    "electron": "^10.1.5",
+    "electron": "^18.3.7",
     "electron-builder": "^22.9.1"
   },
   "build": {
